@@ -1,0 +1,41 @@
+# 文件作用：忽略本地开发缓存、临时产物、安装包和个人环境配置。
+
+# 操作系统生成文件。
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 编辑器个人设置和临时文件。
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 依赖和工具缓存。
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 本地环境变量及敏感配置。
+.env
+.env.*
+!.env.example
+
+# 日志、临时文件和验证产物。
+*.log
+*.tmp
+*.bak
+work/
+tmp/
+coverage/
+playwright-report/
+test-results/
+
+# 构建和扩展打包产物；私钥不可提交。
+dist/
+build/
+*.crx
+*.pem
+*.zip

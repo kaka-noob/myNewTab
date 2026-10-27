@@ -1,0 +1,120 @@
+/* 文件作用：使用弹性布局呈现背景、搜索框、快捷访问和设置弹窗。 */
+/* 统一采用包含内边距的尺寸计算。 */
+* { box-sizing: border-box; }
+/* 页面默认背景为原 Chrome 壁纸，完整覆盖窗口。 */
+body { margin: 0; min-height: 100vh; isolation: isolate; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: #20223b url("background.jpg") center center / cover fixed no-repeat; color: #fff; }
+/* 深色蒙层仅压低背景亮度，上下略深以突出搜索框和快捷访问。 */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, #080b1c38 0%, #080b1c1f 45%, #080b1c3d 100%); }
+/* 让表单控件继承页面字体。 */
+button, input, select { font: inherit; }
+/* 按钮支持鼠标操作。 */
+button { cursor: pointer; }
+/* 主内容随窗口变化，通过弹性布局居中。 */
+.page { min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 48px 24px; }
+/* 搜索和快捷访问以纵向排列，限制最大宽度。 */
+.content { width: min(100%, 900px); display: flex; flex-direction: column; align-items: center; gap: 28px; }
+/* 靠下时调整弹性容器的对齐方式。 */
+body[data-position="lower"] .page { align-items: flex-end; padding-bottom: 12vh; }
+/* 靠上时保留适度的顶部留白。 */
+body[data-position="upper"] .page { align-items: flex-start; padding-top: 22vh; }
+/* 搜索框使用白色圆角外观并提供适度阴影。 */
+.search { display: flex; align-items: center; gap: 16px; width: min(100%, 760px); min-height: 52px; padding: 6px 12px 6px 23px; border-radius: 40px; background: #fff; color: #60636b; box-shadow: 0 3px 18px #12142e26; }
+/* 搜索图标保持固定大小。 */
+.search-icon { width: 22px; height: 22px; flex-shrink: 0; }
+/* 输入区域填满搜索框剩余空间。 */
+.search input { flex: 1; min-width: 0; border: 0; outline: 0; color: #30323b; background: transparent; font-size: 17px; padding: 8px 0; }
+/* 输入提示使用较柔和的灰色。 */
+.search input::placeholder { color: #8a8d96; }
+/* 搜索提交按钮保持简洁的圆形轮廓。 */
+.search-submit { border: 0; border-radius: 0 18px 18px 0; width: 62px; height: 52px; margin: -6px -12px -6px 0; background: #087fd3; color: #fff; font-size: 22px; flex-shrink: 0; }
+/* 快捷访问自动换行以适应窄屏。 */
+.shortcuts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 100%; }
+/* 每个图标及编辑入口共用定位容器。 */
+.shortcut { display: flex; position: relative; width: 112px; border-radius: 12px; }
+/* 快捷链接纵向排列图标和文字。 */
+.shortcut-link { display: flex; flex-direction: column; align-items: center; gap: 13px; width: 100%; padding: 16px 4px; text-decoration: none; color: #fff; border: 0; background: transparent; border-radius: 12px; }
+/* 鼠标停留时显示轻微底色。 */
+.shortcut:hover { background: #ffffff20; backdrop-filter: blur(8px); }
+/* 快捷图标使用半透明深色底，衬托网站原图标。 */
+.shortcut-icon { display: flex; justify-content: center; align-items: center; width: 52px; height: 52px; border-radius: 50%; background: #292a2eeb; box-shadow: 0 2px 8px #10112424; font-size: 23px; font-weight: 600; color: #dce3ff; text-shadow: none; }
+/* 网站图标保留原始比例，统一显示尺寸。 */
+.site-favicon { display: block; width: 28px; height: 28px; object-fit: contain; }
+/* 文字超出时省略，完整名称通过提示显示。 */
+.shortcut-label { width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; font-size: 13px; line-height: 20px; text-shadow: 0 1px 5px #000, 0 1px 10px #0008; }
+/* 编辑按钮平时隐藏，悬停或键盘聚焦时显示。 */
+.edit-shortcut { position: absolute; top: 2px; right: 2px; width: 25px; height: 25px; border: 0; border-radius: 50%; background: #292a2ee6; color: #fff; opacity: 0; }
+/* 同时支持键盘和鼠标访问编辑操作。 */
+.shortcut:hover .edit-shortcut, .shortcut:focus-within .edit-shortcut { opacity: 1; }
+/* 设置入口固定在右下角。 */
+.settings-button { position: fixed; bottom: 20px; right: 20px; border: 1px solid #ffffff35; border-radius: 50%; width: 40px; height: 40px; background: #242530a8; color: #fff; font-size: 23px; backdrop-filter: blur(12px); }
+/* 为键盘用户提供清晰的焦点边框。 */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #92baff; outline-offset: 3px; }
+/* 搜索输入的焦点反馈保持原有柔和阴影，不显示额外浅色光圈。 */
+.search:focus-within { box-shadow: 0 3px 18px #12142e26; }
+/* 搜索输入聚焦时隐藏内部蓝色矩形边框。 */
+.search input:focus-visible { outline: none; }
+/* 搜索容器为下拉建议提供定位参照，保持原搜索宽度。 */
+.search-area { position: relative; width: min(100%, 760px); }
+/* 搜索框在容器内占满宽度。 */
+.search-area .search { width: 100%; }
+/* 建议列表浮在快捷访问上方，不推动页面布局。 */
+.suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; padding: 4px 0 9px; max-height: min(440px, 50vh); overflow-y: auto; border-radius: 0 0 18px 18px; background: #fff; color: #30323b; box-shadow: 0 8px 24px #12142e26; }
+/* 每条建议保持图标、文字和来源水平对齐。 */
+.suggestion { display: flex; align-items: center; gap: 18px; min-height: 44px; padding: 7px 20px; cursor: pointer; font-size: 16px; }
+/* 当前键盘选择及鼠标停留使用浅灰底色。 */
+.suggestion:hover, .suggestion[aria-selected="true"] { background: #f1f3f5; }
+/* 每条建议左侧显示与参考搜索页一致的灰色放大镜。 */
+.suggestion::before { content: ""; flex-shrink: 0; width: 18px; height: 18px; background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23777d83' stroke-width='2'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m16 16 4.5 4.5'/%3E%3C/svg%3E"); }
+/* 建议文本溢出时显示省略号。 */
+.suggestion-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 建议来源以较小文字呈现。 */
+.suggestion-source { display: none; }
+/* 联想展开时搜索框与下拉面板共用一组圆角。 */
+.search-area:has(.suggestions:not([hidden])) .search { border-radius: 18px 18px 0 0; box-shadow: inset 0 -1px #e8e8e8; }
+/* 展开状态聚焦时保持分隔线，避免原焦点阴影覆盖。 */
+.search-area:has(.suggestions:not([hidden])) .search:focus-within { box-shadow: inset 0 -1px #e8e8e8; }
+/* 蓝色按钮中的搜索图标采用白色线条。 */
+.search-submit svg { width: 22px; height: 22px; vertical-align: middle; }
+/* 联想展开时按钮与搜索框顶部边缘对齐。 */
+.search-area:has(.suggestions:not([hidden])) .search-submit { border-radius: 0 18px 0 0; }
+/* 在线建议开关沿用设置面板的纵向布局。 */
+.online-option input { width: 18px; min-height: 18px; align-self: flex-start; accent-color: #c2d3ff; }
+/* 弹窗在窄屏下也保持可见且可滚动。 */
+dialog { width: min(440px, calc(100% - 32px)); max-height: calc(100vh - 40px); padding: 0; border: 1px solid #ffffff29; border-radius: 18px; background: #262733; color: #f2f3fa; box-shadow: 0 20px 80px #0006; }
+/* 弹窗背景降低亮度并模糊。 */
+dialog::backdrop { background: #0b0c1e66; backdrop-filter: blur(5px); }
+/* 弹窗表单采用纵向弹性布局。 */
+.dialog-content { display: flex; flex-direction: column; gap: 20px; padding: 26px; }
+/* 标题保持适度字号。 */
+h2 { margin: 0; font-size: 20px; font-weight: 600; }
+/* 标签与控件垂直排列。 */
+label { display: flex; flex-direction: column; gap: 9px; font-size: 14px; }
+/* 弹窗输入和下拉框统一外观。 */
+label input, label select { width: 100%; min-width: 0; padding: 11px 12px; background: #343643; border: 1px solid #545665; border-radius: 8px; color: #fff; }
+/* 文件选择器使用较小字号。 */
+input[type="file"] { font-size: 12px; }
+/* 提示文字显示适合阅读的行高。 */
+.hint { margin: -8px 0 0; color: #b8bdce; font-size: 12px; line-height: 1.7; }
+/* 错误消息仅在有内容时占据空间。 */
+.error { margin: 0; color: #ffb8bb; font-size: 13px; line-height: 1.5; }
+/* 空错误提示不占空间。 */
+.error:empty { display: none; }
+/* 弹窗操作按钮靠右并允许换行。 */
+.actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+/* 弹窗按钮统一尺寸和边框。 */
+.actions button { padding: 9px 16px; border: 1px solid #555765; background: transparent; color: #e4e7f2; border-radius: 8px; }
+/* 主要按钮使用柔和蓝色。 */
+.actions .primary { background: #c2d3ff; color: #20273c; border-color: #c2d3ff; }
+/* 删除操作与其他按钮分开显示。 */
+.actions .danger { color: #ffb8bb; margin-right: auto; }
+/* 隐藏属性优先于布局样式。 */
+[hidden] { display: none !important; }
+/* 小屏幕缩小留白与快捷项宽度。 */
+@media (max-width: 600px) {
+  /* 小屏搜索区保留足够宽度。 */
+  .page { padding: 32px 16px; }
+  /* 小屏下图标使用紧凑宽度。 */
+  .shortcut { width: 92px; }
+  /* 小屏缩小搜索框间距。 */
+  .search { gap: 10px; padding-left: 18px; }
+}

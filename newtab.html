@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- 文件作用：提供简洁新标签页的搜索、快捷访问及本地设置界面。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>新标签页</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="defaults.js" defer></script>
+  <script src="newtab.js" defer></script>
+  <script src="suggestions.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <div class="content">
+      <div class="search-area">
+      <form id="search-form" class="search" role="search" action="https://www.google.com/search" method="get">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <input id="search-input" name="q" type="search" placeholder="搜索或输入网址" aria-label="搜索或输入网址" autocomplete="off" spellcheck="false" required>
+        <button class="search-submit" type="submit" aria-label="搜索"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
+      </form>
+      <div id="suggestions" class="suggestions" role="listbox" aria-label="搜索建议" hidden></div>
+      </div>
+      <nav id="shortcuts" class="shortcuts" aria-label="快捷访问"></nav>
+    </div>
+  </main>
+  <button id="settings-button" class="settings-button" title="自定义新标签页" aria-label="自定义新标签页">✎</button>
+  <dialog id="shortcut-dialog">
+    <form id="shortcut-form" class="dialog-content">
+      <h2 id="shortcut-heading">添加快捷访问</h2>
+      <label>名称<input id="shortcut-name" maxlength="40" required autocomplete="off"></label>
+      <label>网址<input id="shortcut-url" placeholder="https://example.com" required autocomplete="off"></label>
+      <p id="shortcut-error" class="error" role="alert"></p>
+      <div class="actions"><button id="delete-shortcut" class="danger" type="button">删除</button><button id="cancel-shortcut" type="button">取消</button><button class="primary" type="submit">保存</button></div>
+    </form>
+  </dialog>
+  <dialog id="settings-dialog">
+    <div class="dialog-content">
+      <h2>自定义新标签页</h2>
+      <label>搜索引擎<select id="engine"><option value="google">Google</option><option value="bing">必应</option><option value="baidu">百度</option></select></label>
+      <label class="online-option">在线搜索建议<input id="online-suggestions" type="checkbox"></label>
+      <p class="hint">开启后，输入的关键词会发送给当前搜索引擎获取联想词；关闭时仅匹配本机快捷访问。</p>
+      <label>背景图片<input id="background-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
+      <p class="hint">选择不超过 3 MB 的 JPG、PNG 或 WebP 图片。图片与快捷访问仅保存在本机。</p>
+      <label>内容位置<select id="position"><option value="center">居中</option><option value="lower">靠下</option><option value="upper">靠上</option></select></label>
+      <p id="settings-error" class="error" role="alert"></p>
+      <div class="actions"><button id="reset-background" type="button">恢复原背景</button><button id="close-settings" class="primary" type="button">完成</button></div>
+    </div>
+  </dialog>
+</body>
+</html>
